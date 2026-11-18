@@ -40,3 +40,36 @@ if (printButton) {
   printButton.hidden = false;
   printButton.addEventListener("click", () => window.print());
 }
+
+const phdDropdown = document.querySelector("[data-phd-dropdown]");
+if (phdDropdown instanceof HTMLDetailsElement) {
+  const summary = phdDropdown.querySelector("summary");
+  let isHovering = false;
+  let pointerType = "";
+
+  phdDropdown.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "touch") {
+      isHovering = true;
+      phdDropdown.open = true;
+    }
+  });
+
+  phdDropdown.addEventListener("pointerleave", () => {
+    isHovering = false;
+    if (!phdDropdown.contains(document.activeElement)) phdDropdown.open = false;
+  });
+
+  phdDropdown.addEventListener("focusout", () => {
+    requestAnimationFrame(() => {
+      if (!isHovering && !phdDropdown.contains(document.activeElement)) phdDropdown.open = false;
+    });
+  });
+
+  summary.addEventListener("pointerdown", (event) => {
+    pointerType = event.pointerType;
+  });
+
+  summary.addEventListener("click", (event) => {
+    if (event.detail > 0 && pointerType !== "touch") event.preventDefault();
+  });
+}
